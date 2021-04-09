@@ -1,0 +1,38 @@
+{
+	"name": "@ydipeepo/node-mqtt",
+	"version": "0.1.0",
+	"author": "Ydi",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"prebuild": "rimraf dist",
+		"build": "tsc",
+		"test-lint": "eslint src --ext .js,.ts",
+		"prepublishOnly": "npm run build"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"devDependencies": {
+		"@types/node": "^14.14.17",
+		"@typescript-eslint/eslint-plugin": "^4.6.0",
+		"@typescript-eslint/parser": "^4.6.0",
+		"chai": "^4.3.0",
+		"eslint": "^7.12.1",
+		"eslint-config-prettier": "^6.15.0",
+		"eslint-import-resolver-typescript": "^2.3.0",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-jsx-a11y": "^6.4.1",
+		"mocha": "^8.3.0",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.1.3"
+	},
+	"dependencies": {
+		"@ydipeepo/node-async": "^0.2.0",
+		"@ydipeepo/node-debug": "^0.2.0",
+		"mqtt": "^4.2.6"
+	}
+}
