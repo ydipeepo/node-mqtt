@@ -1,4 +1,4 @@
-import { connect, MqttClient as MqttClientCore } from "mqtt";
+import { connect, MqttClient as MqttConnection } from "mqtt";
 import { AsyncStream, ConcurrentQueue, Signal } from "@ydipeepo/node-async";
 import MqttClientOptions from "./MqttClientOptions";
 import MqttPublishOptions from "./MqttPublishOptions";
@@ -7,6 +7,8 @@ import MqttPacket from "./MqttPacket";
 import MqttMessage from "./MqttMessage";
 
 interface MqttClient {
+
+	readonly connection: MqttConnection;
 
 	readonly connected: boolean;
 
@@ -101,7 +103,7 @@ class MqttClientImpl implements MqttClient {
 		return this.connection.reconnecting;
 	}
 
-	constructor(readonly connection: MqttClientCore) {
+	constructor(readonly connection: MqttConnection) {
 	}
 
 	publish(topic: string, message: string | Buffer, options?: MqttPublishOptions) {
