@@ -65,11 +65,11 @@ class MqttClientImpl implements MqttClient {
 				packet,
 			});
 
-		await new Promise<void>((resolve, reject) => void this.client.subscribe(topics, options, error => {
+		await new Promise<void>((resolve, reject) => void this.connection.subscribe(topics, options, error => {
 			if (error) {
 				reject(error);
 			} else {
-				this.client.on("message", handleMessage);
+				this.connection.on("message", handleMessage);
 				resolve();
 			}
 		}));
@@ -81,8 +81,8 @@ class MqttClientImpl implements MqttClient {
 			}
 		} finally {
 			await messageStream.return();
-			await new Promise<void>((resolve, reject) => void this.client.unsubscribe(topics, undefined, error => {
-				this.client.off("message", handleMessage);
+			await new Promise<void>((resolve, reject) => void this.connection.unsubscribe(topics, undefined, error => {
+				this.connection.off("message", handleMessage);
 				if (error) {
 					reject(error);
 				} else {
@@ -94,19 +94,19 @@ class MqttClientImpl implements MqttClient {
 	}
 
 	get connected() {
-		return this.client.connected;
+		return this.connection.connected;
 	}
 
 	get reconnecting() {
-		return this.client.reconnecting;
+		return this.connection.reconnecting;
 	}
 
-	constructor(private readonly client: MqttClientCore) {
+	constructor(readonly connection: MqttClientCore) {
 	}
 
 	publish(topic: string, message: string | Buffer, options?: MqttPublishOptions) {
 		return new Promise<MqttPacket>((resolve, reject) => {
-			this.client.publish(topic, message, options, (error, packet) => {
+			this.connection.publish(topic, message, options, (error, packet) => {
 				if (error) {
 					reject(error);
 				} else {
@@ -125,7 +125,7 @@ class MqttClientImpl implements MqttClient {
 
 	close(force?: boolean) {
 		this.stopRequest.trigger();
-		return new Promise<void>(resolve => void this.client.end(force, undefined, resolve));
+		return new Promise<void>(resolve => void this.connection.end(force, undefined, resolve));
 	}
 
 }
@@ -133,9 +133,9 @@ class MqttClientImpl implements MqttClient {
 namespace MqttClient {
 
 	export async function create(brokerUrl: string, options?: MqttClientOptions): Promise<MqttClient> {
-		const mqttClient = connect(brokerUrl, options);
-		await new Promise<void>(resolve => mqttClient.on("connect", resolve));
-		return new MqttClientImpl(mqttClient);
+		const connection = connect(brokerUrl, options);
+		await new Promise<void>(resolve => connection.on("connect", resolve));
+		return new MqttClientImpl(connection);
 	}
 
 }
